@@ -3,6 +3,7 @@ black
 mypy
 flake8
 pytest
-fastapi
+fastapi~=0.70.1
 gunicorn
 uvicorn
+starlette~=0.16.0
