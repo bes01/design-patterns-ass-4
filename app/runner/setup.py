@@ -12,7 +12,7 @@ def setup() -> FastAPI:
     app.include_router(customer_api.customer_api, prefix="/customer", tags=["Customer"])
     app.include_router(manager_api.manager_api, prefix="/manager", tags=["Manager"])
 
-    app.state.repository = setup_pos_repository()
+    app.state.repository = setup_sql_lite_repository()
     app.state.pos = setup_pos(app.state.repository)
     app.state.reporter = setup_reporter(setup_x_report(app.state.repository))
 
@@ -20,7 +20,7 @@ def setup() -> FastAPI:
 
 
 # setup service beans
-def setup_pos_repository() -> SqlLiteRepository:
+def setup_sql_lite_repository() -> SqlLiteRepository:
     return SqlLiteRepository(r"C:\Users\besik.kapanadze\Desktop\Freeuni-Stuff\Design-Patterns\design-patterns-ass-4"
                              r"\disk.db")
 

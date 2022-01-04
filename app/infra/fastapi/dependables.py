@@ -2,11 +2,6 @@ from starlette.requests import Request
 
 from app.core.business_logic.manager_report import Reporter
 from app.core.business_logic.point_of_sales import PointOfSales
-from app.core.persistence.repository import IPOSRepository
-
-
-def get_pos_repository(request: Request) -> IPOSRepository:
-    return request.app.state.repository
 
 
 def get_pos(request: Request) -> PointOfSales:
