@@ -18,3 +18,6 @@ class Receipt:
     closed: bool
     open_date: str
     items: List[Item]
+
+    def __iter__(self):
+        return iter(self.items)

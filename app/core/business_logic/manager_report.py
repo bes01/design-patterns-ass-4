@@ -1,3 +1,4 @@
+import itertools
 from typing import Protocol
 
 from app.core.business_logic.report_type import ReportType
@@ -15,17 +16,13 @@ class XReportCommand:
 
     def report(self) -> str:
         receipts = self._repository.get_current_day_receipts()
-        items = []
-        for receipt in receipts:
-            items += receipt.items
-        items.sort(key=lambda x: x.id)
 
         result = "Items Sold: "
 
         total_cost = 0.0
-        for i in range(len(items)):
-            total_cost += items[i].price * items[i].quantity
-            result += f"{items[i].name} {items[i].quantity}x {items[i].price * items[i].quantity}$ | "
+        for item in itertools.chain(*receipts):
+            total_cost += item.price * item.quantity
+            result += f"{item.name} {item.quantity}x {item.price * item.quantity}$ | "
 
         result += f"Total receipts: {len(receipts)} | " f"Total cost: {total_cost} |"
 
