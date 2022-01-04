@@ -8,5 +8,7 @@ customer_api = APIRouter()
 
 
 @customer_api.get("/receipt/{receipt_id}")
-def request_receipt(receipt_id: int, pos: ICustomerPointOfSales = Depends(get_pos)) -> ReceiptResponse:
+def request_receipt(
+    receipt_id: int, pos: ICustomerPointOfSales = Depends(get_pos)
+) -> ReceiptResponse:
     return ReceiptResponse(*pos.get_receipt(receipt_id))

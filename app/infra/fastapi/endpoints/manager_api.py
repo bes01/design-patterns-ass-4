@@ -8,5 +8,7 @@ manager_api = APIRouter()
 
 
 @manager_api.get("/report/{report_type}")
-def request_receipt(report_type: ReportType, reporter: Reporter = Depends(get_reporter)) -> str:
+def request_receipt(
+    report_type: ReportType, reporter: Reporter = Depends(get_reporter)
+) -> str:
     return reporter.make_report(report_type)

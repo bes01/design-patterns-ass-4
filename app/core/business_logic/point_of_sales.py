@@ -13,15 +13,14 @@ class ICashierPointOfSales(Protocol):
     def open_receipt(self) -> int:
         pass
 
-    def add_item_to_receipt(self, receipt_id, item_id, quantity) -> None:
+    def add_item_to_receipt(self, receipt_id: int, item_id: int, quantity: int) -> None:
         pass
 
-    def close_receipt(self, receipt_id) -> None:
+    def close_receipt(self, receipt_id: int) -> None:
         pass
 
 
 class PointOfSales:
-
     def __init__(self, repository: IPOSRepository) -> None:
         self._repository = repository
 
@@ -30,15 +29,15 @@ class PointOfSales:
             raise Exception("Cannot open second receipt!")
         return self._repository.create_receipt()
 
-    def add_item_to_receipt(self, receipt_id, item_id, quantity) -> None:
+    def add_item_to_receipt(self, receipt_id: int, item_id: int, quantity: int) -> None:
         if quantity <= 0:
             raise Exception("Illegal parameter")
         self._repository.add_item(receipt_id, item_id, quantity)
 
-    def close_receipt(self, receipt_id) -> None:
+    def close_receipt(self, receipt_id: int) -> None:
         self._repository.close_receipt(receipt_id)
 
-    def get_receipt(self, receipt_id: int) -> Tuple[Receipt, int]:
+    def get_receipt(self, receipt_id: int) -> Tuple[Receipt, float]:
         receipt = self._repository.get_receipt(receipt_id)
         total = sum([item.price * item.quantity for item in receipt.items])
         return receipt, total

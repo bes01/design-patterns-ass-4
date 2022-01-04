@@ -12,11 +12,17 @@ def open_receipt(pos: ICashierPointOfSales = Depends(get_pos)) -> int:
 
 
 @cashier_api.post("/receipt/{receipt_id}/add/item/{item_id}")
-def add_item(receipt_id: int, item_id: int, quantity: int = 1,
-             pos: ICashierPointOfSales = Depends(get_pos)) -> None:
+def add_item(
+    receipt_id: int,
+    item_id: int,
+    quantity: int = 1,
+    pos: ICashierPointOfSales = Depends(get_pos),
+) -> None:
     pos.add_item_to_receipt(receipt_id, item_id, quantity)
 
 
 @cashier_api.post("/receipt/{receipt_id}/close")
-def close_receipt(receipt_id: int, pos: ICashierPointOfSales = Depends(get_pos)) -> None:
+def close_receipt(
+    receipt_id: int, pos: ICashierPointOfSales = Depends(get_pos)
+) -> None:
     pos.close_receipt(receipt_id)

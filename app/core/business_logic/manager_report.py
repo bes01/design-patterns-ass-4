@@ -5,13 +5,11 @@ from app.core.persistence.repository import IReportRepository
 
 
 class IReportCommand(Protocol):
-
     def report(self) -> str:
         pass
 
 
 class XReportCommand:
-
     def __init__(self, repository: IReportRepository) -> None:
         self._repository = repository
 
@@ -24,19 +22,17 @@ class XReportCommand:
 
         result = "Items Sold: "
 
-        total_cost = 0
+        total_cost = 0.0
         for i in range(len(items)):
             total_cost += items[i].price * items[i].quantity
             result += f"{items[i].name} {items[i].quantity}x {items[i].price * items[i].quantity}$ | "
 
-        result += f"Total receipts: {len(receipts)} | " \
-                  f"Total cost: {total_cost} |"
+        result += f"Total receipts: {len(receipts)} | " f"Total cost: {total_cost} |"
 
         return result
 
 
 class Reporter:
-
     def __init__(self, *, x_report: IReportCommand):
         self._report_services = {ReportType.X_REPORT: x_report}
 

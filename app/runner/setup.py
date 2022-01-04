@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 
-from app.core.business_logic.manager_report import IReportCommand, XReportCommand, Reporter
+from app.core.business_logic.manager_report import (
+    IReportCommand,
+    Reporter,
+    XReportCommand,
+)
 from app.core.business_logic.point_of_sales import PointOfSales
-from app.core.persistence.repository import IPOSRepository, SqlLiteRepository, IReportRepository
+from app.core.persistence.repository import (
+    IPOSRepository,
+    IReportRepository,
+    SqlLiteRepository,
+)
 from app.infra.fastapi.endpoints import cashier_api, customer_api, manager_api
 
 
@@ -21,8 +29,10 @@ def setup() -> FastAPI:
 
 # setup service beans
 def setup_sql_lite_repository() -> SqlLiteRepository:
-    return SqlLiteRepository(r"C:\Users\besik.kapanadze\Desktop\Freeuni-Stuff\Design-Patterns\design-patterns-ass-4"
-                             r"\disk.db")
+    return SqlLiteRepository(
+        r"C:\Users\besik.kapanadze\Desktop\Freeuni-Stuff\Design-Patterns\design-patterns-ass-4"
+        r"\disk.db"
+    )
 
 
 def setup_pos(repository: IPOSRepository) -> PointOfSales:
