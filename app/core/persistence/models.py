@@ -7,9 +7,8 @@ class Item:
     id: int
     name: str
     price: float
-    discount: float
+    parent_item_id: int
     quantity: int
-    item: "Item"
 
 
 @dataclasses.dataclass
