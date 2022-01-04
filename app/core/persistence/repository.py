@@ -104,13 +104,15 @@ class SqlLiteRepository:
         if receipt_row is None:
             raise Exception("Couldn't find receipt with passed id!")
         cursor.execute(
-            "select i.*, ri.quantity from Items i join Receipt_items ri on i.id = ri.item_id where ri.receipt_id = ?",
+            "select i.*, ri.quantity, i.price * ri.quantity from Items i "
+            "join Receipt_items ri on i.id = ri.item_id "
+            "where ri.receipt_id = ?",
             [receipt_id],
         )
         item_rows = cursor.fetchall()
         items = []
         for item in item_rows:
-            items.append(Item(item[0], item[1], item[2], item[3], item[4]))
+            items.append(Item(item[0], item[1], item[2], item[3], item[4], item[5]))
         return Receipt(receipt_row[0], bool(receipt_row[1]), receipt_row[2], items)
 
     def get_current_day_receipts(self) -> List[Receipt]:

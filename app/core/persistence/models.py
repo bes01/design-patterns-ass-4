@@ -9,6 +9,7 @@ class Item:
     price: float
     parent_item_id: int
     quantity: int
+    total_price: float
 
 
 @dataclasses.dataclass
