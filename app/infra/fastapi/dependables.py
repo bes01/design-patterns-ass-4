@@ -1,12 +1,11 @@
+from typing import Any
+
 from starlette.requests import Request
 
-from app.core.business_logic.manager_report import Reporter
-from app.core.business_logic.point_of_sales import PointOfSales
 
-
-def get_pos(request: Request) -> PointOfSales:
+def get_pos(request: Request) -> Any:
     return request.app.state.point_of_sales
 
 
-def get_reporter(request: Request) -> Reporter:
+def get_reporter(request: Request) -> Any:
     return request.app.state.manager_reporter

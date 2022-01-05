@@ -1,6 +1,6 @@
 import dataclasses
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Iterator, List
 
 
 class Sellable(ABC):
@@ -52,5 +52,5 @@ class Receipt:
     open_date: str
     items: List[CountedItem]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[CountedItem]:
         return iter(self.items)
