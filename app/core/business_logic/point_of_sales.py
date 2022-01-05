@@ -1,5 +1,7 @@
 from typing import Protocol, Tuple
 
+from fastapi import HTTPException
+
 from app.core.persistence.models import Receipt
 from app.core.persistence.repository import IPOSRepository
 
@@ -26,14 +28,16 @@ class PointOfSales:
 
     def open_receipt(self) -> int:
         if self._repository.open_receipt_exists():
-            raise Exception("Cannot open second receipt!")
+            raise HTTPException(status_code=409, detail="Cannot open second receipt!")
         return self._repository.create_receipt()
 
     def add_item_to_receipt(self, receipt_id: int, item_id: int, quantity: int) -> None:
         if quantity <= 0:
-            raise Exception("Illegal parameter!")
+            raise HTTPException(status_code=409, detail="Illegal quantity parameter!")
         if not self._repository.receipt_exists(receipt_id, False):
-            raise Exception("Can't modify closed receipt!")
+            raise HTTPException(
+                status_code=409, detail="Can't find open receipt with passed id!"
+            )
         self._repository.add_item(receipt_id, item_id, quantity)
 
     def close_receipt(self, receipt_id: int) -> None:
