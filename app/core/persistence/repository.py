@@ -4,7 +4,7 @@ from typing import List, Protocol
 
 from fastapi import HTTPException
 
-from app.core.persistence.models import CountedItem, Pack, Receipt, SingleItem
+from app.core.persistence.models import CountedItem, ItemGroup, Receipt, SingleItem
 
 
 class IPOSRepository(Protocol):
@@ -138,7 +138,7 @@ class SqlLiteRepository:
         for pack in pack_rows:
             items.append(
                 CountedItem(
-                    Pack(pack[0], pack[1], SingleItem(pack[2], pack[3])),
+                    ItemGroup(pack[0], [SingleItem(pack[2], pack[3])] * pack[1]),
                     pack[4],
                     pack[1] * pack[4] * pack[3],
                 )

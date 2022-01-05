@@ -26,16 +26,15 @@ class SingleItem(Sellable):
 
 
 @dataclasses.dataclass
-class Pack(Sellable):
+class ItemGroup(Sellable):
     name: str
-    quantity: int
-    item: Sellable
+    items: List[Sellable]
 
     def get_name(self) -> str:
         return self.name
 
     def get_price(self) -> float:
-        return self.quantity * self.item.get_price()
+        return sum([item.get_price() for item in self.items])
 
 
 @dataclasses.dataclass
