@@ -115,7 +115,7 @@ class SqlLiteRepository:
         item_rows = cursor.fetchall()
         items = []
         for item in item_rows:
-            items.append(CountedItem(SingleItem(item[0], item[1]), item[2]))
+            items.append(CountedItem(SingleItem(item[0], item[1]), item[2], item[1] * item[2]))
 
         cursor.execute(
             "select i.name, i.pack_size, it.name, it.price, ri.quantity "
@@ -128,7 +128,8 @@ class SqlLiteRepository:
         )
         pack_rows = cursor.fetchall()
         for pack in pack_rows:
-            items.append(CountedItem(Pack(pack[0], pack[1], SingleItem(pack[2], pack[3])), pack[4]))
+            items.append(
+                CountedItem(Pack(pack[0], pack[1], SingleItem(pack[2], pack[3])), pack[4], pack[1] * pack[4] * pack[3]))
 
         return Receipt(receipt_row[0], bool(receipt_row[1]), receipt_row[2], items)
 

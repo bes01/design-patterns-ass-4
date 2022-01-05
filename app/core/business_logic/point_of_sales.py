@@ -41,5 +41,5 @@ class PointOfSales:
 
     def get_receipt(self, receipt_id: int) -> Tuple[Receipt, float]:
         receipt = self._repository.get_receipt(receipt_id)
-        total = sum([item.get_total_price() for item in receipt])
+        total = sum([item.sum_price for item in receipt])
         return receipt, total

@@ -21,8 +21,8 @@ class XReportCommand:
 
         total_cost = 0.0
         for counted_item in itertools.chain(*receipts):
-            total_cost += counted_item.get_total_price()
-            result += f"{counted_item.item.name} {counted_item.count}x {counted_item.get_total_price()}$ | "
+            total_cost += counted_item.sum_price
+            result += f"{counted_item.item.name} {counted_item.count}x {counted_item.sum_price}$ | "
 
         result += f"Total receipts: {len(receipts)} | " f"Total cost: {total_cost} |"
 

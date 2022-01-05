@@ -21,8 +21,8 @@ def setup() -> FastAPI:
     app.include_router(manager_api.manager_api, prefix="/manager", tags=["Manager"])
 
     app.state.repository = setup_sql_lite_repository()
-    app.state.pos = setup_pos(app.state.repository)
-    app.state.reporter = setup_reporter(setup_x_report(app.state.repository))
+    app.state.point_of_sales = setup_pos(app.state.repository)
+    app.state.manager_reporter = setup_reporter(setup_x_report(app.state.repository))
 
     return app
 

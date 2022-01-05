@@ -29,22 +29,20 @@ class SingleItem(Sellable):
 class Pack(Sellable):
     name: str
     quantity: int
-    sellable: Sellable
+    item: Sellable
 
     def get_name(self) -> str:
         return self.name
 
     def get_price(self) -> float:
-        return self.quantity * self.sellable.get_price()
+        return self.quantity * self.item.get_price()
 
 
 @dataclasses.dataclass
 class CountedItem:
     item: Sellable
     count: int
-
-    def get_total_price(self) -> float:
-        return self.count * self.item.get_price()
+    sum_price: int
 
 
 @dataclasses.dataclass
