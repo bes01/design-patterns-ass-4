@@ -2,9 +2,8 @@ import datetime
 import sqlite3
 from typing import List, Protocol
 
-from fastapi import HTTPException
-
 from app.core.models import CountedItem, ItemGroup, Receipt, SingleItem
+from app.infra.persistence.persistence_exception import RecordNotFoundException
 
 
 class ITerminalRepository(Protocol):
@@ -90,9 +89,7 @@ class SqlLiteRepository:
             self._datasource.commit()
             cursor.close()
         else:
-            raise HTTPException(
-                status_code=404, detail="Couldn't find receipt with passed id!"
-            )
+            raise RecordNotFoundException()
 
     def receipt_exists(self, receipt_id: int, closed: bool) -> bool:
         cursor = self._datasource.cursor()
@@ -109,9 +106,7 @@ class SqlLiteRepository:
         cursor.execute("select * from Receipts where _id = ?", [receipt_id])
         receipt_row = cursor.fetchone()
         if receipt_row is None:
-            raise HTTPException(
-                status_code=404, detail="Couldn't find receipt with passed id!"
-            )
+            raise RecordNotFoundException()
         cursor.execute(
             "select i.name, i.price, ri.quantity, i.id from Items i "
             "join Receipt_items ri on i.id = ri.item_id "

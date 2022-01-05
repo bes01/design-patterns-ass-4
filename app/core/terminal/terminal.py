@@ -3,6 +3,7 @@ from typing import Tuple
 from fastapi import HTTPException
 
 from app.core.models import Receipt
+from app.infra.persistence.persistence_exception import RecordNotFoundException
 from app.infra.persistence.repository import ITerminalRepository
 
 
@@ -20,14 +21,20 @@ class TerminalInteractor:
             raise HTTPException(status_code=409, detail="Illegal quantity parameter!")
         if not self._repository.receipt_exists(receipt_id, False):
             raise HTTPException(
-                status_code=409, detail="Can't find open receipt with passed id!"
+                status_code=404, detail="Can't find open receipt with passed id!"
             )
         self._repository.add_item(receipt_id, item_id, quantity)
 
     def close_receipt(self, receipt_id: int) -> None:
-        self._repository.close_receipt(receipt_id)
+        try:
+            self._repository.close_receipt(receipt_id)
+        except RecordNotFoundException as ex:
+            raise HTTPException(status_code=404, detail=ex.message)
 
     def get_receipt(self, receipt_id: int) -> Tuple[Receipt, float]:
-        receipt = self._repository.get_receipt(receipt_id)
-        total = sum([item.sum_price for item in receipt])
-        return receipt, total
+        try:
+            receipt = self._repository.get_receipt(receipt_id)
+            total = sum([item.sum_price for item in receipt])
+            return receipt, total
+        except RecordNotFoundException as ex:
+            raise HTTPException(status_code=404, detail=ex.message)
