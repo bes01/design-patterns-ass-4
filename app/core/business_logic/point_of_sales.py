@@ -31,7 +31,9 @@ class PointOfSales:
 
     def add_item_to_receipt(self, receipt_id: int, item_id: int, quantity: int) -> None:
         if quantity <= 0:
-            raise Exception("Illegal parameter")
+            raise Exception("Illegal parameter!")
+        if not self._repository.receipt_exists(receipt_id, False):
+            raise Exception("Can't modify closed receipt!")
         self._repository.add_item(receipt_id, item_id, quantity)
 
     def close_receipt(self, receipt_id: int) -> None:
@@ -39,5 +41,5 @@ class PointOfSales:
 
     def get_receipt(self, receipt_id: int) -> Tuple[Receipt, float]:
         receipt = self._repository.get_receipt(receipt_id)
-        total = sum([item.total_price for item in receipt])
+        total = sum([item.get_total_price() for item in receipt])
         return receipt, total

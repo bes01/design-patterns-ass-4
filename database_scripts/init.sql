@@ -9,18 +9,20 @@ CREATE TABLE
 CREATE TABLE
     Items
 (
-    id        integer primary key,
-    name      varchar(255),
-    price     numeric,
-    parent_id integer default null,
-    foreign key (parent_id) references Items (id)
+    id           integer primary key,
+    name         varchar(255),
+    price        numeric,
+    type         varchar(25),
+    pack_item_id integer default null,
+    pack_size    integer default null,
+    foreign key (pack_item_id) references Items (id)
 );
 
-insert into Items(id, name, price, parent_id)
-values (0, 'Beer', 3.99, null),
-       (1, '6x Beer Pack', 14.99, 0),
-       (2, 'Cheese', 2.99, null),
-       (3, 'Bread', 1.45, null);
+insert into Items(id, name, price, type, pack_item_id, pack_size)
+values (0, 'Beer', 3.99, 'SINGLE', null, null),
+       (1, '6x Beer Pack', null, 'PACK', 0, 6),
+       (2, 'Cheese', 2.99, 'SINGLE', null, null),
+       (3, 'Bread', 1.45, 'SINGLE', null, null);
 
 CREATE TABLE
     Receipt_items

@@ -2,7 +2,7 @@ import datetime
 import sqlite3
 from typing import List, Protocol
 
-from app.core.persistence.models import Item, Receipt
+from app.core.persistence.models import Receipt, SingleItem, Pack, CountedItem
 
 
 class IPOSRepository(Protocol):
@@ -19,6 +19,9 @@ class IPOSRepository(Protocol):
         pass
 
     def get_receipt(self, receipt_id: int) -> Receipt:
+        pass
+
+    def receipt_exists(self, receipt_id: int, closed: bool) -> bool:
         pass
 
 
@@ -43,7 +46,7 @@ class SqlLiteRepository:
 
     def open_receipt_exists(self) -> bool:
         cursor = self._datasource.cursor()
-        cursor.execute("SELECT EXISTS(SELECT 1 FROM Receipts WHERE closed = 0);")
+        cursor.execute("SELECT EXISTS(SELECT 1 FROM Receipts WHERE closed = FALSE);")
         receipt_exists = cursor.fetchone()
         cursor.close()
         return bool(receipt_exists[0])
@@ -77,17 +80,17 @@ class SqlLiteRepository:
         return bool(receipt_exists[0])
 
     def close_receipt(self, receipt_id: int) -> None:
-        if self._receipt_exists(receipt_id, 0):
+        if self.receipt_exists(receipt_id, False):
             cursor = self._datasource.cursor()
             cursor.execute(
-                "update Receipts set closed = 1 " "where _id = ?", [receipt_id]
+                "update Receipts set closed = TRUE " "where _id = ?", [receipt_id]
             )
             self._datasource.commit()
             cursor.close()
         else:
             raise Exception("Couldn't find receipt with passed id!")
 
-    def _receipt_exists(self, receipt_id: int, closed: int) -> bool:
+    def receipt_exists(self, receipt_id: int, closed: bool) -> bool:
         cursor = self._datasource.cursor()
         cursor.execute(
             "SELECT EXISTS(SELECT 1 FROM Receipts WHERE _id= ? and closed = ?);",
@@ -104,21 +107,35 @@ class SqlLiteRepository:
         if receipt_row is None:
             raise Exception("Couldn't find receipt with passed id!")
         cursor.execute(
-            "select i.*, ri.quantity, i.price * ri.quantity from Items i "
+            "select i.name, i.price, ri.quantity from Items i "
             "join Receipt_items ri on i.id = ri.item_id "
-            "where ri.receipt_id = ?",
+            "where ri.receipt_id = ? and i.type = 'SINGLE'",
             [receipt_id],
         )
         item_rows = cursor.fetchall()
         items = []
         for item in item_rows:
-            items.append(Item(item[0], item[1], item[2], item[3], item[4], item[5]))
+            items.append(CountedItem(SingleItem(item[0], item[1]), item[2]))
+
+        cursor.execute(
+            "select i.name, i.pack_size, it.name, it.price, ri.quantity "
+            "from Items i "
+            "join Receipt_items ri on i.id = ri.item_id "
+            "join Items it on it.id = i.pack_item_id "
+            "where ri.receipt_id = ? "
+            "and i.type = 'PACK'",
+            [receipt_id],
+        )
+        pack_rows = cursor.fetchall()
+        for pack in pack_rows:
+            items.append(CountedItem(Pack(pack[0], pack[1], SingleItem(pack[2], pack[3])), pack[4]))
+
         return Receipt(receipt_row[0], bool(receipt_row[1]), receipt_row[2], items)
 
     def get_current_day_receipts(self) -> List[Receipt]:
         cursor = self._datasource.cursor()
         cursor.execute(
-            "select _id from Receipts where open_date = ? and closed = 1",
+            "select _id from Receipts where open_date = ? and closed = TRUE",
             [datetime.date.today()],
         )
         receipt_ids = cursor.fetchall()
