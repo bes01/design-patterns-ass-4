@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.core.business_logic.point_of_sales import ICashierPointOfSales
+from app.core.facade import ICashierPointOfSales
 from app.infra.fastapi.dependables import get_pos
 
 cashier_api = APIRouter()

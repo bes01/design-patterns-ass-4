@@ -12,9 +12,14 @@ class Sellable(ABC):
     def get_price(self) -> float:
         pass
 
+    @abstractmethod
+    def get_unique_identifier(self) -> int:
+        pass
+
 
 @dataclasses.dataclass
 class SingleItem(Sellable):
+    id: int
     name: str
     price: float
 
@@ -24,9 +29,13 @@ class SingleItem(Sellable):
     def get_price(self) -> float:
         return self.price
 
+    def get_unique_identifier(self) -> int:
+        return self.id
+
 
 @dataclasses.dataclass
 class ItemGroup(Sellable):
+    id: int
     name: str
     items: List[Sellable]
 
@@ -35,6 +44,9 @@ class ItemGroup(Sellable):
 
     def get_price(self) -> float:
         return sum([item.get_price() for item in self.items])
+
+    def get_unique_identifier(self) -> int:
+        return self.id
 
 
 @dataclasses.dataclass

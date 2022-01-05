@@ -4,10 +4,10 @@ from typing import List, Protocol
 
 from fastapi import HTTPException
 
-from app.core.persistence.models import CountedItem, ItemGroup, Receipt, SingleItem
+from app.core.models import CountedItem, ItemGroup, Receipt, SingleItem
 
 
-class IPOSRepository(Protocol):
+class ITerminalRepository(Protocol):
     def create_receipt(self) -> int:
         pass
 
@@ -27,7 +27,7 @@ class IPOSRepository(Protocol):
         pass
 
 
-class IReportRepository(Protocol):
+class IReporterRepository(Protocol):
     def get_current_day_receipts(self) -> List[Receipt]:
         pass
 
@@ -113,7 +113,7 @@ class SqlLiteRepository:
                 status_code=404, detail="Couldn't find receipt with passed id!"
             )
         cursor.execute(
-            "select i.name, i.price, ri.quantity from Items i "
+            "select i.name, i.price, ri.quantity, i.id from Items i "
             "join Receipt_items ri on i.id = ri.item_id "
             "where ri.receipt_id = ? and i.type = 'SINGLE'",
             [receipt_id],
@@ -122,11 +122,13 @@ class SqlLiteRepository:
         items = []
         for item in item_rows:
             items.append(
-                CountedItem(SingleItem(item[0], item[1]), item[2], item[1] * item[2])
+                CountedItem(
+                    SingleItem(item[3], item[0], item[1]), item[2], item[1] * item[2]
+                )
             )
 
         cursor.execute(
-            "select i.name, i.pack_size, it.name, it.price, ri.quantity "
+            "select i.name, i.pack_size, it.name, it.price, ri.quantity, i.id, i.pack_item_id "
             "from Items i "
             "join Receipt_items ri on i.id = ri.item_id "
             "join Items it on it.id = i.pack_item_id "
@@ -138,7 +140,11 @@ class SqlLiteRepository:
         for pack in pack_rows:
             items.append(
                 CountedItem(
-                    ItemGroup(pack[0], [SingleItem(pack[2], pack[3])] * pack[1]),
+                    ItemGroup(
+                        pack[5],
+                        pack[0],
+                        [SingleItem(pack[6], pack[2], pack[3])] * pack[1],
+                    ),
                     pack[4],
                     pack[1] * pack[4] * pack[3],
                 )

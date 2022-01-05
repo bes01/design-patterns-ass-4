@@ -1,29 +1,13 @@
-from typing import Protocol, Tuple
+from typing import Tuple
 
 from fastapi import HTTPException
 
-from app.core.persistence.models import Receipt
-from app.core.persistence.repository import IPOSRepository
+from app.core.models import Receipt
+from app.infra.persistence.repository import ITerminalRepository
 
 
-class ICustomerPointOfSales(Protocol):
-    def get_receipt(self, receipt_id: int) -> Tuple[Receipt, int]:
-        pass
-
-
-class ICashierPointOfSales(Protocol):
-    def open_receipt(self) -> int:
-        pass
-
-    def add_item_to_receipt(self, receipt_id: int, item_id: int, quantity: int) -> None:
-        pass
-
-    def close_receipt(self, receipt_id: int) -> None:
-        pass
-
-
-class PointOfSales:
-    def __init__(self, repository: IPOSRepository) -> None:
+class TerminalInteractor:
+    def __init__(self, repository: ITerminalRepository) -> None:
         self._repository = repository
 
     def open_receipt(self) -> int:

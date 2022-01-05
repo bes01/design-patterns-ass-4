@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.core.business_logic.point_of_sales import ICustomerPointOfSales
+from app.core.facade import ICustomerPointOfSales
 from app.infra.fastapi.dependables import get_pos
 from app.infra.fastapi.dto.receipt_response import ReceiptResponse
 
