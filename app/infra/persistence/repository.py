@@ -76,6 +76,16 @@ class SqlLiteRepository:
         cursor.close()
         return bool(receipt_exists[0])
 
+    def item_exists(self, item_id: int) -> bool:
+        cursor = self._datasource.cursor()
+        cursor.execute(
+            "SELECT EXISTS(SELECT 1 FROM main.Items WHERE id= ? );",
+            [item_id],
+        )
+        item_exists = cursor.fetchone()
+        cursor.close()
+        return bool(item_exists[0])
+
     def get_receipt(self, receipt_id: int) -> Receipt:
         cursor = self._datasource.cursor()
         cursor.execute("select * from Receipts where _id = ?", [receipt_id])

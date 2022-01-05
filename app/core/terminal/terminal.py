@@ -25,6 +25,9 @@ class ITerminalRepository(Protocol):
     def receipt_exists(self, receipt_id: int, closed: bool) -> bool:
         pass
 
+    def item_exists(self, item_id: int) -> bool:
+        pass
+
 
 class TerminalInteractor:
     def __init__(self, repository: ITerminalRepository) -> None:
@@ -41,6 +44,10 @@ class TerminalInteractor:
         if not self._repository.receipt_exists(receipt_id, False):
             raise HTTPException(
                 status_code=404, detail="Can't find open receipt with passed id!"
+            )
+        if not self._repository.item_exists(item_id):
+            raise HTTPException(
+                status_code=404, detail="Can't find item with passed id!"
             )
         self._repository.add_item(receipt_id, item_id, quantity)
 
