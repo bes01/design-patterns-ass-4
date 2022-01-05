@@ -1,9 +1,13 @@
 import itertools
-from typing import Any, Protocol
+from typing import Any, List, Protocol
 
 from app.core.manager.report_type import ReportType
-from app.infra.persistence.models import Sellable
-from app.infra.persistence.repository import IReporterRepository
+from app.core.models import Receipt, Sellable
+
+
+class IReporterRepository(Protocol):
+    def get_current_day_receipts(self) -> List[Receipt]:
+        pass
 
 
 class IReportCommand(Protocol):

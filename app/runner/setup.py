@@ -3,16 +3,13 @@ from fastapi import FastAPI
 from app.core.facade import PointOfSales
 from app.core.manager.manager_report import (
     IReportCommand,
+    IReporterRepository,
     ReporterInteractor,
     XReportCommand,
 )
-from app.core.terminal.terminal import TerminalInteractor
+from app.core.terminal.terminal import ITerminalRepository, TerminalInteractor
 from app.infra.fastapi.endpoints import cashier_api, customer_api, manager_api
-from app.infra.persistence.repository import (
-    IReporterRepository,
-    ITerminalRepository,
-    SqlLiteRepository,
-)
+from app.infra.persistence.repository import SqlLiteRepository
 from app.runner.settings import DB_LOCATION
 
 

@@ -1,10 +1,29 @@
-from typing import Tuple
+from typing import Protocol, Tuple
 
 from fastapi import HTTPException
 
-from app.infra.persistence.models import Receipt
+from app.core.models import Receipt
 from app.infra.persistence.persistence_exception import RecordNotFoundException
-from app.infra.persistence.repository import ITerminalRepository
+
+
+class ITerminalRepository(Protocol):
+    def create_receipt(self) -> int:
+        pass
+
+    def open_receipt_exists(self) -> bool:
+        pass
+
+    def add_item(self, receipt_id: int, item_id: int, quantity: int) -> None:
+        pass
+
+    def close_receipt(self, receipt_id: int) -> None:
+        pass
+
+    def get_receipt(self, receipt_id: int) -> Receipt:
+        pass
+
+    def receipt_exists(self, receipt_id: int, closed: bool) -> bool:
+        pass
 
 
 class TerminalInteractor:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.infra.persistence.models import Receipt
+from app.core.models import Receipt
 
 
 @dataclass

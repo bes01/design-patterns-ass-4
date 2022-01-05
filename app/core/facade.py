@@ -3,8 +3,8 @@ from typing import Any, Protocol, Tuple
 
 from app.core.manager.manager_report import ReporterInteractor
 from app.core.manager.report_type import ReportType
+from app.core.models import Receipt
 from app.core.terminal.terminal import TerminalInteractor
-from app.infra.persistence.models import Receipt
 
 
 class ICustomerPointOfSales(Protocol):
