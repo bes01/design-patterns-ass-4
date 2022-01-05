@@ -2,7 +2,7 @@ import datetime
 import sqlite3
 from typing import List, Protocol
 
-from app.core.models import CountedItem, ItemGroup, Receipt, SingleItem
+from app.infra.persistence.models import CountedItem, ItemGroup, Receipt, SingleItem
 from app.infra.persistence.persistence_exception import RecordNotFoundException
 
 

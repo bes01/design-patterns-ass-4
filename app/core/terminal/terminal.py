@@ -2,7 +2,7 @@ from typing import Tuple
 
 from fastapi import HTTPException
 
-from app.core.models import Receipt
+from app.infra.persistence.models import Receipt
 from app.infra.persistence.persistence_exception import RecordNotFoundException
 from app.infra.persistence.repository import ITerminalRepository
 
