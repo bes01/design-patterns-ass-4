@@ -132,11 +132,11 @@ class SqlLiteRepository:
 
         return Receipt(receipt_row[0], bool(receipt_row[1]), receipt_row[2], items)
 
-    def get_current_day_receipts(self) -> List[Receipt]:
+    def get_receipts_by_date(self, date: datetime.date) -> List[Receipt]:
         cursor = self._datasource.cursor()
         cursor.execute(
             "select _id from Receipts where open_date = ? and closed = TRUE",
-            [datetime.date.today()],
+            [date],
         )
         receipt_ids = cursor.fetchall()
         receipts = []

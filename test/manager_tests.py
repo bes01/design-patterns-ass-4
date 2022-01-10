@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime, timedelta
 from typing import Generator
 
 import pytest
@@ -30,7 +31,7 @@ def clean_up() -> Generator[None, None, None]:
 
 
 def test_x_report_with_no_receipts() -> None:
-    report = reporter.make_report(ReportType.X_REPORT)
+    report = reporter.make_report(datetime.date(datetime.today()), ReportType.X_REPORT)
     assert len(report["items_sold"]) == 0
     assert report["total_receipts"] == 0
     assert report["total_cost"] == 0.0
@@ -39,7 +40,7 @@ def test_x_report_with_no_receipts() -> None:
 def test_x_report_with_open_receipt() -> None:
     receipt_id = terminal.open_receipt()
     terminal.add_item_to_receipt(receipt_id, 0, 1)
-    report = reporter.make_report(ReportType.X_REPORT)
+    report = reporter.make_report(datetime.date(datetime.today()), ReportType.X_REPORT)
     assert len(report["items_sold"]) == 0
     assert report["total_receipts"] == 0
     assert report["total_cost"] == 0.0
@@ -49,10 +50,22 @@ def test_x_report_with_closed_receipt() -> None:
     receipt_id = terminal.open_receipt()
     terminal.add_item_to_receipt(receipt_id, 0, 1)
     terminal.close_receipt(receipt_id)
-    report = reporter.make_report(ReportType.X_REPORT)
+    report = reporter.make_report(datetime.date(datetime.today()), ReportType.X_REPORT)
     assert len(report["items_sold"]) == report["items_sold"][0]["units"] == 1
     assert report["total_receipts"] == 1
     assert report["total_cost"] == 3.99
+
+
+def test_x_report_with_other_date() -> None:
+    receipt_id = terminal.open_receipt()
+    terminal.add_item_to_receipt(receipt_id, 0, 1)
+    terminal.close_receipt(receipt_id)
+    report = reporter.make_report(
+        datetime.date(datetime.today() - timedelta(days=1)), ReportType.X_REPORT
+    )
+    assert len(report["items_sold"]) == 0
+    assert report["total_receipts"] == 0
+    assert report["total_cost"] == 0.0
 
 
 def test_x_report_with_multiple_items_receipt() -> None:
@@ -60,7 +73,7 @@ def test_x_report_with_multiple_items_receipt() -> None:
     terminal.add_item_to_receipt(receipt_id, 0, 2)
     terminal.add_item_to_receipt(receipt_id, 3, 1)
     terminal.close_receipt(receipt_id)
-    report = reporter.make_report(ReportType.X_REPORT)
+    report = reporter.make_report(datetime.date(datetime.today()), ReportType.X_REPORT)
     assert len(report["items_sold"]) == 2
     assert sum([item["units"] for item in report["items_sold"].values()]) == 3
     assert report["total_receipts"] == 1
@@ -77,7 +90,7 @@ def test_x_report_with_multiple_receipts() -> None:
     terminal.add_item_to_receipt(second_receipt_id, 0, 1)
     terminal.close_receipt(second_receipt_id)
 
-    report = reporter.make_report(ReportType.X_REPORT)
+    report = reporter.make_report(datetime.date(datetime.today()), ReportType.X_REPORT)
     assert len(report["items_sold"]) == 2
     assert sum([item["units"] for item in report["items_sold"].values()]) == 4
     assert report["total_receipts"] == 2

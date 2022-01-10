@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 from typing import Any, Protocol, Tuple
 
@@ -24,7 +25,9 @@ class ICashierPointOfSales(Protocol):
 
 
 class IManagerPointOfSales(Protocol):
-    def get_manager_report(self, report_type: ReportType) -> dict[str, Any]:
+    def get_manager_report(
+        self, report_date: datetime.date, report_type: ReportType
+    ) -> dict[str, Any]:
         pass
 
 
@@ -45,5 +48,7 @@ class PointOfSales:
     def close_receipt(self, receipt_id: int) -> None:
         self._terminal.close_receipt(receipt_id)
 
-    def get_manager_report(self, report_type: ReportType) -> dict[str, Any]:
-        return self._reporter.make_report(report_type)
+    def get_manager_report(
+        self, report_date: datetime.date, report_type: ReportType
+    ) -> dict[str, Any]:
+        return self._reporter.make_report(report_date, report_type)

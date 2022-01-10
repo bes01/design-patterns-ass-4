@@ -1,3 +1,4 @@
+import datetime
 import itertools
 from typing import Any, List, Protocol
 
@@ -6,12 +7,12 @@ from app.core.models import Receipt, Sellable
 
 
 class IReporterRepository(Protocol):
-    def get_current_day_receipts(self) -> List[Receipt]:
+    def get_receipts_by_date(self, date: datetime.date) -> List[Receipt]:
         pass
 
 
 class IReportCommand(Protocol):
-    def report(self) -> dict[str, Any]:
+    def report(self, report_date: datetime.date) -> dict[str, Any]:
         pass
 
 
@@ -19,8 +20,8 @@ class XReportCommand:
     def __init__(self, repository: IReporterRepository) -> None:
         self._repository = repository
 
-    def report(self) -> dict[str, Any]:
-        receipts = self._repository.get_current_day_receipts()
+    def report(self, report_date: datetime.date) -> dict[str, Any]:
+        receipts = self._repository.get_receipts_by_date(report_date)
 
         items_sold: dict[int, Any] = {}
         total_receipts = len(receipts)
@@ -48,5 +49,7 @@ class ReporterInteractor:
     def __init__(self, *, x_report: IReportCommand) -> None:
         self._report_services = {ReportType.X_REPORT: x_report}
 
-    def make_report(self, report_type: ReportType) -> dict[str, Any]:
-        return self._report_services[report_type].report()
+    def make_report(
+        self, report_date: datetime.date, report_type: ReportType
+    ) -> dict[str, Any]:
+        return self._report_services[report_type].report(report_date)

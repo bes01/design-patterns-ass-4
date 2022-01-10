@@ -1,3 +1,4 @@
+import datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends
@@ -11,6 +12,8 @@ manager_api = APIRouter()
 
 @manager_api.get("/report/{report_type}")
 def request_receipt_report(
-    report_type: ReportType, pos: IManagerPointOfSales = Depends(get_pos)
+    report_day: datetime.date,
+    report_type: ReportType,
+    pos: IManagerPointOfSales = Depends(get_pos),
 ) -> dict[str, Any]:
-    return pos.get_manager_report(report_type)
+    return pos.get_manager_report(report_day, report_type)
